@@ -1,7 +1,6 @@
 // --- Supabase Initialization ---
-// IMPORTANT: Supabase URL and Anon Key should be fetched securely from /api/config
-// for all environments (local development with `vercel dev` and deployed Vercel apps).
-// Do NOT hardcode these sensitive keys directly in client-side code for production.
+// IMPORTANT: Supabase URL and Anon Key are always fetched securely from /api/config
+// Do NOT hardcode these sensitive keys directly in client-side code.
 
 let supabase; // Declare supabase here, initialized in initializeSupabase()
 
@@ -13,22 +12,29 @@ async function initializeSupabase() {
     let finalSupabaseAnonKey;
 
     try {
+        // Always attempt to fetch from /api/config.
+        // This endpoint will be available when running 'vercel dev' locally or when deployed on Vercel.
         const response = await fetch('/api/config');
         if (!response.ok) {
+            // Throw an error if the fetch itself fails (e.g., 404, 500 from the API endpoint)
             throw new Error(`Failed to fetch config from /api/config: ${response.status} ${response.statusText}`);
         }
         const config = await response.json();
+
         finalSupabaseUrl = config.supabaseUrl;
         finalSupabaseAnonKey = config.supabaseAnonKey;
 
+        // Explicitly check if the keys were actually returned in the JSON response
         if (!finalSupabaseUrl || !finalSupabaseAnonKey) {
             throw new Error('Supabase URL or Anon Key is missing from /api/config response.');
         }
         console.log('Supabase config loaded from /api/config.');
 
     } catch (error) {
+        // This catch block will now correctly log and alert if /api/config fails
+        // or if the keys are missing from its response.
         console.error('CRITICAL ERROR: Failed to initialize Supabase client. Application might not function correctly.', error);
-        alert('Application failed to load necessary configurations. Please try again later.');
+        alert('Application failed to load necessary configurations. Please try again later. Check console for details.');
         return; // Prevent further execution if critical config is missing
     }
 
