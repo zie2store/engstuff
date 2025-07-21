@@ -6,6 +6,7 @@
     <title>Add Document</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="container">
@@ -22,7 +23,7 @@
 
         <div class="sidebar">
             <a href="document.html">Manage Documents</a>
-            <a href="input.html">Add New Document</a>
+            <a href="input.html">Add Documents</a>
             <button id="logout-button">Logout</button>
         </div>
 
@@ -45,20 +46,5 @@
             <button id="save-document-button">SAVE</button>
         </div>
     </div>
-
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => { // Make async
-            await initializeSupabase(); // Initialize Supabase first
-            await checkLoginStatus(); // Redirects if not logged in (now uses Supabase auth)
-            await loadCategoriesForInput();
-            applyThemeFromLocalStorage();
-            setupThemeToggle();
-
-            document.getElementById('save-document-button').addEventListener('click', saveDocument);
-            document.getElementById('add-category-button').addEventListener('click', addNewCategory);
-            document.getElementById('logout-button').addEventListener('click', logout);
-        });
-    </script>
 </body>
 </html>
