@@ -1,7 +1,15 @@
-const DOCUMENTS_STORAGE_KEY = 'english_stuffs_documents';
-const CATEGORIES_STORAGE_KEY = 'english_stuffs_categories';
+// Temporarily hardcode for local testing.
+// IMPORTANT: For Vercel deployment, these should come from environment variables
+// via a Vercel Serverless Function (as explained in Step 5).
+const SUPABASE_URL = 'https://mddepayikxvuwqmozrmp.supabase.co'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZGVwYXlpa3h2dXdxbW96cm1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNzA0NTQsImV4cCI6MjA2ODY0NjQ1NH0.zwqPs2OxV3yBf1SiwvqXXB02WWV7gzqeKWIUBemQX7E'; 
+    
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// --- Existing Constants (keep these) ---
+const DOCUMENTS_STORAGE_KEY = 'english_stuffs_documents'; // This will be deprecated for Supabase
+const CATEGORIES_STORAGE_KEY = 'english_stuffs_categories'; // We'll manage this via Supabase
 const THEME_STORAGE_KEY = 'english_stuffs_theme';
-const LOGGED_IN_STORAGE_KEY = 'isLoggedIn';
 
 // --- Theme Toggling ---
 function applyThemeFromLocalStorage() {
