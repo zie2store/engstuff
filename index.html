@@ -6,6 +6,7 @@
     <title>English Documents</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="container">
@@ -49,18 +50,5 @@
             <iframe id="document-viewer" src="" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
-
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => { // Make async
-            await initializeSupabase(); // Initialize Supabase first
-            await loadDocuments(false); // Load documents for public view (no delete)
-            await loadCategoriesForFilter('category-filter');
-            applyThemeFromLocalStorage();
-            setupThemeToggle();
-            setupPopup();
-            setupFilterAndSort('document-table');
-        });
-    </script>
 </body>
 </html>
