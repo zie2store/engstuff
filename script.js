@@ -384,6 +384,8 @@ async function sortDocuments(column) {
 
 // --- Authentication (Supabase Auth) ---
 async function login() {
+    await initializeSupabase(); // ⬅️ Pastikan dipanggil ulang di sini!
+
     if (!supabase) {
         console.error('Supabase client not initialized.');
         alert('Application not fully initialized. Please refresh.');
@@ -398,6 +400,13 @@ async function login() {
     const password = passwordInput.value.trim();
 
     errorMessage.textContent = '';
+
+    // Simple validation
+    if (!email || !password) {
+        errorMessage.textContent = 'Please enter both username and password.';
+        errorMessage.style.display = 'block';
+        return;
+    }
 
     const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
