@@ -6,6 +6,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="container login-container">
@@ -34,23 +35,5 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => { // Make async
-            await initializeSupabase(); // Initialize Supabase first
-            applyThemeFromLocalStorage();
-            setupThemeToggle();
-            document.getElementById('login-button').addEventListener('click', login);
-
-            // Check if already logged in and redirect using Supabase session
-            async function redirectIfLoggedIn() {
-                const { data: { session }, error } = await supabase.auth.getSession();
-                if (session) {
-                    window.location.href = 'document.html';
-                }
-            }
-            redirectIfLoggedIn();
-        });
-    </script>
-</body>
+    </body>
 </html>
