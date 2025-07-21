@@ -143,8 +143,8 @@ async function loadDocuments(showDeleteOption) {
     filteredDocuments.forEach((doc, index) => {
         const row = tableBody.insertRow();
         row.insertCell(0).textContent = index + 1;
-        row.insertCell(1).textContent = doc.title;
-        row.insertCell(2).textContent = doc.category;
+        row.insertCell(1).textContent = doc.title || 'Untitled';
+        row.insertCell(2).textContent = doc.category && doc.category.trim() !== '' ? doc.category : 'Uncategorized';
 
         const viewCell = row.insertCell(3);
         const viewLink = document.createElement('a');
