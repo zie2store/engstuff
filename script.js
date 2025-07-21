@@ -32,7 +32,7 @@ async function initializeSupabase() {
         return;
     }
 
-    const { createClient } = supabase;
+    const createClient = window.supabase.createClient;
     supabase = createClient(finalSupabaseUrl, finalSupabaseAnonKey);
     console.log('Supabase client created.');
 }
