@@ -118,6 +118,7 @@ async function loadDocuments(showDeleteOption) {
 
     let filteredDocuments = documents.filter(doc => {
         const matchesTitle = doc.title.toLowerCase().includes(filterTitle);
+        const docCategory = (doc.category || '').toLowerCase();
         const matchesCategory = filterCategory === '' || doc.category.toLowerCase() === filterCategory;
         return matchesTitle && matchesCategory;
     });
