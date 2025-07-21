@@ -60,10 +60,11 @@
 
     <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            checkLoginStatus(); // Redirects if not logged in
-            loadDocuments(true); // Load documents with delete option
-            loadCategoriesForFilter('category-filter');
+        document.addEventListener('DOMContentLoaded', async () => { // Make async
+            await initializeSupabase(); // Initialize Supabase first
+            await checkLoginStatus(); // Redirects if not logged in (now uses Supabase auth)
+            await loadDocuments(true); // Load documents with delete option
+            await loadCategoriesForFilter('category-filter');
             applyThemeFromLocalStorage();
             setupThemeToggle();
             setupPopup();
