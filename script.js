@@ -12,11 +12,8 @@ async function initializeSupabase() {
     let finalSupabaseAnonKey;
 
     try {
-        // Always attempt to fetch from /api/config.
-        // This endpoint will be available when running 'vercel dev' locally or when deployed on Vercel.
         const response = await fetch('/api/config');
         if (!response.ok) {
-            // Throw an error if the fetch itself fails (e.g., 404, 500 from the API endpoint)
             throw new Error(`Failed to fetch config from /api/config: ${response.status} ${response.statusText}`);
         }
         const config = await response.json();
@@ -24,18 +21,15 @@ async function initializeSupabase() {
         finalSupabaseUrl = config.supabaseUrl;
         finalSupabaseAnonKey = config.supabaseAnonKey;
 
-        // Explicitly check if the keys were actually returned in the JSON response
         if (!finalSupabaseUrl || !finalSupabaseAnonKey) {
             throw new Error('Supabase URL or Anon Key is missing from /api/config response.');
         }
         console.log('Supabase config loaded from /api/config.');
 
     } catch (error) {
-        // This catch block will now correctly log and alert if /api/config fails
-        // or if the keys are missing from its response.
         console.error('CRITICAL ERROR: Failed to initialize Supabase client. Application might not function correctly.', error);
         alert('Application failed to load necessary configurations. Please try again later. Check console for details.');
-        return; // Prevent further execution if critical config is missing
+        return;
     }
 
     supabase = Supabase.createClient(finalSupabaseUrl, finalSupabaseAnonKey);
@@ -471,6 +465,72 @@ window.logout = logout;
 window.saveDocument = saveDocument;
 window.addNewCategory = addNewCategory;
 
-// No initial call to initializeSupabase here.
-// Each HTML file's DOMContentLoaded listener is responsible for calling
-// `await initializeSupabase();` first, as shown in the updated HTML examples.
+
+// --- DOMContentLoaded Listeners (Moved from HTML to script.js) ---
+document.addEventListener('DOMContentLoaded', async () => {
+    const pathname = window.location.pathname;
+
+    await initializeSupabase(); // Initialize Supabase FIRST for ALL pages
+
+    applyThemeFromLocalStorage();
+    setupThemeToggle();
+    setupPopup(); // Popup is global, set up on all pages that might use it
+
+    if (pathname.includes('login.html') || pathname === '/' || pathname === '/index.html') {
+        // Login page specific setup or root/index if direct access
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('login-button');
+
+        if (loginButton) {
+            loginButton.addEventListener('click', login);
+        }
+
+        // Check if already logged in and redirect for login.html
+        if (pathname.includes('login.html')) {
+            async function redirectIfLoggedIn() {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (session) {
+                    window.location.href = 'document.html';
+                }
+            }
+            redirectIfLoggedIn();
+        }
+
+        // Index page specific setup (public view)
+        if (pathname === '/' || pathname.includes('index.html')) {
+            await loadDocuments(false); // Load documents for public view (no delete)
+            await loadCategoriesForFilter('category-filter');
+            setupFilterAndSort('document-table');
+        }
+
+    } else if (pathname.includes('document.html')) {
+        // Document management page specific setup (logged-in view)
+        await checkLoginStatus(); // Redirects if not logged in
+        await loadDocuments(true); // Load documents with delete option
+        await loadCategoriesForFilter('category-filter');
+        setupFilterAndSort('document-table');
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', logout);
+        }
+
+    } else if (pathname.includes('input.html')) {
+        // Input page specific setup
+        await checkLoginStatus(); // Redirects if not logged in
+        await loadCategoriesForInput();
+        const saveButton = document.getElementById('save-document-button');
+        const addCategoryButton = document.getElementById('add-category-button');
+        const logoutButton = document.getElementById('logout-button');
+
+        if (saveButton) {
+            saveButton.addEventListener('click', saveDocument);
+        }
+        if (addCategoryButton) {
+            addCategoryButton.addEventListener('click', addNewCategory);
+        }
+        if (logoutButton) {
+            logoutButton.addEventListener('click', logout);
+        }
+    }
+});
