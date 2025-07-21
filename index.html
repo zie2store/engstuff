@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documents for English Teaching-Learning Activities</title>
+    <title>English Documents</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <span class="page-title"></span>
+            <span class="page-title">index.html</span>
             <div class="theme-switch">
                 <span id="night-mode-icon"></span>
                 <span id="day-mode-icon"></span>
@@ -52,9 +52,10 @@
 
     <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDocuments(false); // Load documents for public view (no delete)
-            loadCategoriesForFilter('category-filter');
+        document.addEventListener('DOMContentLoaded', async () => { // Make async
+            await initializeSupabase(); // Initialize Supabase first
+            await loadDocuments(false); // Load documents for public view (no delete)
+            await loadCategoriesForFilter('category-filter');
             applyThemeFromLocalStorage();
             setupThemeToggle();
             setupPopup();
