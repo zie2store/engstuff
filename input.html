@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>english.stuffs - Add Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="page-title">input.html</span>
+            <div class="theme-switch">
+                <span id="night-mode-icon"></span>
+                <span id="day-mode-icon"></span>
+                <input type="checkbox" id="theme-toggle" class="toggle-checkbox">
+                <label for="theme-toggle" class="toggle-label"></label>
+            </div>
+        </header>
+        <h1>english.stuffs</h1>
+
+        <div class="sidebar">
+            <a href="document.html">Manage Documents</a>
+            <a href="input.html">Add New Document</a>
+            <button id="logout-button">Logout</button>
+        </div>
+
+        <div class="main-content form-container">
+            <div class="form-group">
+                <label for="document-title" class="form-label">TITLE</label>
+                <textarea id="document-title" rows="3" placeholder="Enter document title"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="document-category" class="form-label">CATEGORY</label>
+                <select id="document-category">
+                    <option value="">Select Category</option>
+                    </select>
+                <button id="add-category-button">Add New Category</button>
+            </div>
+            <div class="form-group">
+                <label for="document-url" class="form-label">URL</label>
+                <input type="url" id="document-url" placeholder="Enter Google Drive URL">
+            </div>
+            <button id="save-document-button">SAVE</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus(); // Redirects if not logged in
+            loadCategoriesForInput();
+            applyThemeFromLocalStorage();
+            setupThemeToggle();
+
+            document.getElementById('save-document-button').addEventListener('click', saveDocument);
+            document.getElementById('add-category-button').addEventListener('click', addNewCategory);
+            document.getElementById('logout-button').addEventListener('click', logout);
+        });
+    </script>
+</body>
+</html>

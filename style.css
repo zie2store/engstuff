@@ -1,0 +1,470 @@
+/* Basic Reset & Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative; /* For positioning header elements */
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-title {
+    font-size: 0.9em;
+    color: #777;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+/* Theme Switch (Day/Night Mode) */
+.theme-switch {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.theme-switch #day-mode-icon,
+.theme-switch #night-mode-icon {
+    font-size: 1.5em; /* Adjust icon size */
+    margin: 0 5px;
+}
+
+.theme-switch #night-mode-icon::before { content: '🌙'; }
+.theme-switch #day-mode-icon::before { content: '☀️'; }
+
+
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-label {
+    width: 50px;
+    height: 25px;
+    background-color: #ccc;
+    border-radius: 15px;
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.toggle-label::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 21px;
+    height: 21px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #007bff; /* Blue for night mode engaged */
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+    transform: translateX(25px);
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #333;
+    color: #eee;
+}
+
+body.dark-mode .container {
+    background-color: #555;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode h1,
+body.dark-mode th,
+body.dark-mode td,
+body.dark-mode .page-title {
+    color: #eee;
+}
+
+body.dark-mode .toggle-label {
+    background-color: #666;
+}
+
+body.dark-mode .toggle-checkbox:checked + .toggle-label {
+    background-color: #0056b3; /* Darker blue for night mode engaged in dark theme */
+}
+
+/* Sidebar for Dashboard */
+.sidebar {
+    width: 200px;
+    float: left;
+    padding-right: 20px;
+    border-right: 1px solid #eee;
+    min-height: 400px; /* Adjust as needed */
+}
+
+.sidebar a, .sidebar button {
+    display: block;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #007bff;
+    border-bottom: 1px solid #eee;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-size: 1em;
+}
+
+.sidebar a:hover, .sidebar button:hover {
+    color: #0056b3;
+    background-color: #f0f0f0;
+}
+
+.main-content {
+    margin-left: 220px;
+    padding-left: 20px;
+}
+
+/* Dark mode for sidebar */
+body.dark-mode .sidebar {
+    border-right-color: #777;
+}
+
+body.dark-mode .sidebar a, body.dark-mode .sidebar button {
+    color: #9bd0ff;
+    border-bottom-color: #777;
+}
+
+body.dark-mode .sidebar a:hover, body.dark-mode .sidebar button:hover {
+    background-color: #666;
+    color: #cceeff;
+}
+
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+td a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+td .delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+td .delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Dark mode for table */
+body.dark-mode th {
+    background-color: #666;
+    color: #eee;
+}
+
+body.dark-mode td {
+    border-color: #777;
+}
+
+
+/* Form Styling */
+.form-container {
+    padding-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+textarea {
+    resize: vertical; /* Allow vertical resizing */
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#add-category-button {
+    background-color: #28a745;
+    margin-left: 10px;
+}
+
+#add-category-button:hover {
+    background-color: #218838;
+}
+
+/* Dark mode for forms */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="url"],
+body.dark-mode input[type="password"],
+body.dark-mode textarea,
+body.dark-mode select {
+    background-color: #777;
+    border-color: #999;
+    color: #eee;
+}
+
+body.dark-mode button {
+    background-color: #0056b3;
+}
+
+body.dark-mode button:hover {
+    background-color: #003f7f;
+}
+
+body.dark-mode #add-category-button {
+    background-color: #218838;
+}
+
+body.dark-mode #add-category-button:hover {
+    background-color: #1a6f2c;
+}
+
+
+/* Login Page Specific Styles */
+.login-container {
+    max-width: 500px;
+    text-align: center;
+}
+
+.login-form {
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: calc(100% - 20px);
+    margin-bottom: 15px;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 12px;
+}
+
+.error-message {
+    color: #dc3545;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+/* Dark mode for login */
+body.dark-mode .login-form {
+    background-color: #666;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Popup Overlay for Google Drive Viewer */
+.popup-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 900px;
+    height: 80%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-content iframe {
+    width: 100%;
+    flex-grow: 1; /* Make iframe fill available space */
+    border: none;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2em;
+    cursor: pointer;
+    color: #333;
+}
+
+body.dark-mode .popup-content {
+    background-color: #555;
+    color: #eee;
+}
+
+body.dark-mode .close-button {
+    color: #eee;
+}
+
+
+/* Filters and Sorting */
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    gap: 10px; /* Space between filter elements */
+    align-items: center;
+}
+
+.filters input[type="text"],
+.filters select {
+    flex: 1; /* Allow input and select to grow */
+    min-width: 150px; /* Minimum width before wrapping */
+}
+
+.filters button {
+    padding: 8px 15px;
+    margin-top: 0; /* Override default button margin */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .sidebar {
+        width: 100%;
+        float: none;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        padding-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .filters {
+        flex-direction: column; /* Stack filter items vertically */
+        align-items: stretch; /* Stretch items to full width */
+    }
+
+    .filters input[type="text"],
+    .filters select,
+    .filters button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+
+    td .delete-btn {
+        padding: 4px 8px;
+    }
+
+    .popup-content {
+        width: 95%;
+        height: 90%;
+    }
+
+    .close-button {
+        font-size: 1.5em;
+    }
+}

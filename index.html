@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>english.stuffs - Documents</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="page-title">index.html</span>
+            <div class="theme-switch">
+                <span id="night-mode-icon"></span>
+                <span id="day-mode-icon"></span>
+                <input type="checkbox" id="theme-toggle" class="toggle-checkbox">
+                <label for="theme-toggle" class="toggle-label"></label>
+            </div>
+        </header>
+        <h1>english.stuffs</h1>
+
+        <div class="filters">
+            <input type="text" id="document-filter" placeholder="Filter by Document Title">
+            <select id="category-filter">
+                <option value="">Filter by Category</option>
+                </select>
+            <button onclick="sortDocuments('title')">Sort by Title</button>
+            <button onclick="sortDocuments('category')">Sort by Category</button>
+        </div>
+
+        <table id="document-table">
+            <thead>
+                <tr>
+                    <th>NO</th>
+                    <th>DOCUMENT</th>
+                    <th>CATEGORY</th>
+                    <th>VIEW</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <div id="popup-overlay" class="popup-overlay">
+        <div class="popup-content">
+            <span class="close-button">&times;</span>
+            <iframe id="document-viewer" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDocuments(false); // Load documents for public view (no delete)
+            loadCategoriesForFilter('category-filter');
+            applyThemeFromLocalStorage();
+            setupThemeToggle();
+            setupPopup();
+            setupFilterAndSort('document-table');
+        });
+    </script>
+</body>
+</html>

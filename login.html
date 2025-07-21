@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>english.stuffs - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container login-container">
+        <header>
+            <span class="page-title">login</span>
+            <div class="theme-switch">
+                <span id="night-mode-icon"></span>
+                <span id="day-mode-icon"></span>
+                <input type="checkbox" id="theme-toggle" class="toggle-checkbox">
+                <label for="theme-toggle" class="toggle-label"></label>
+            </div>
+        </header>
+        <h1>english.stuffs</h1>
+
+        <div class="login-form">
+            <div class="form-group">
+                <label for="username" class="form-label">USERNAME</label>
+                <input type="text" id="username" placeholder="mrshin">
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">PASSWORD</label>
+                <input type="password" id="password" placeholder="••••••••">
+            </div>
+            <button id="login-button">LOGIN</button>
+            <p id="login-error-message" class="error-message"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            applyThemeFromLocalStorage();
+            setupThemeToggle();
+            document.getElementById('login-button').addEventListener('click', login);
+            // Check if already logged in and redirect
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = 'document.html';
+            }
+        });
+    </script>
+</body>
+</html>
