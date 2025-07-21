@@ -1,46 +1,45 @@
 // --- Supabase Initialization ---
-// IMPORTANT: For Vercel deployment, these should come from environment variables
-// via a Vercel Serverless Function (as explained previously in Step 9).
-const SUPABASE_URL = 'https://mddepayikxvuwqmozrmp.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZGVwYXlpa3h2dXdxbW96cm1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNzA0NTQsImV4cCI6MjA2ODY0NjQ1NH0.zwqPs2OxV3yBf1SiwvqXXB02WWV7gzqeKWIUBemQX7E';
+// IMPORTANT: Supabase URL and Anon Key should be fetched securely from /api/config
+// for all environments (local development with `vercel dev` and deployed Vercel apps).
+// Do NOT hardcode these sensitive keys directly in client-side code for production.
 
-let supabase; // Declare supabase here
+let supabase; // Declare supabase here, initialized in initializeSupabase()
 
-// Function to initialize Supabase client securely based on deployment environment
+// Function to initialize Supabase client securely
 async function initializeSupabase() {
     if (supabase) return; // Prevent re-initialization
 
-    let finalSupabaseUrl = SUPABASE_URL;
-    let finalSupabaseAnonKey = SUPABASE_ANON_KEY;
+    let finalSupabaseUrl;
+    let finalSupabaseAnonKey;
 
-    // Check if running on a deployed Vercel environment (not localhost)
-    // This assumes your Vercel deployment will serve the /api/config endpoint
-    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        try {
-            const response = await fetch('/api/config');
-            if (response.ok) {
-                const config = await response.json();
-                finalSupabaseUrl = config.supabaseUrl;
-                finalSupabaseAnonKey = config.supabaseAnonKey;
-            } else {
-                console.warn('Failed to fetch config from /api/config. Using hardcoded keys.');
-                // Fallback to hardcoded keys if API endpoint not available or fails
-            }
-        } catch (error) {
-            console.warn('Error fetching config from /api/config:', error);
-            // Fallback to hardcoded keys if fetch fails
+    try {
+        const response = await fetch('/api/config');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch config from /api/config: ${response.status} ${response.statusText}`);
         }
+        const config = await response.json();
+        finalSupabaseUrl = config.supabaseUrl;
+        finalSupabaseAnonKey = config.supabaseAnonKey;
+
+        if (!finalSupabaseUrl || !finalSupabaseAnonKey) {
+            throw new Error('Supabase URL or Anon Key is missing from /api/config response.');
+        }
+        console.log('Supabase config loaded from /api/config.');
+
+    } catch (error) {
+        console.error('CRITICAL ERROR: Failed to initialize Supabase client. Application might not function correctly.', error);
+        alert('Application failed to load necessary configurations. Please try again later.');
+        return; // Prevent further execution if critical config is missing
     }
 
     supabase = Supabase.createClient(finalSupabaseUrl, finalSupabaseAnonKey);
-    console.log('Supabase client initialized.');
+    console.log('Supabase client created.');
 }
 
 
-// --- Existing Constants (keep these for theme) ---
+// --- Theme Toggling ---
 const THEME_STORAGE_KEY = 'english_stuffs_theme';
 
-// --- Theme Toggling (Keep as is) ---
 function applyThemeFromLocalStorage() {
     const theme = localStorage.getItem(THEME_STORAGE_KEY);
     if (theme === 'dark') {
@@ -69,7 +68,6 @@ function setupThemeToggle() {
 
 // --- Data Management (Supabase) ---
 async function getDocumentsFromDB() {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
         return [];
@@ -77,7 +75,7 @@ async function getDocumentsFromDB() {
     const { data, error } = await supabase
         .from('documents')
         .select('id, title, category, url')
-        .order('created_at', { ascending: true }); // Order by creation time
+        .order('created_at', { ascending: true });
 
     if (error) {
         console.error('Error fetching documents:', error.message);
@@ -87,14 +85,13 @@ async function getDocumentsFromDB() {
 }
 
 async function getCategoriesFromDB() {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
         return [];
     }
     const { data, error } = await supabase
         .from('categories')
-        .select('name'); // Select only the name column
+        .select('name');
 
     if (error) {
         console.error('Error fetching categories:', error.message);
@@ -102,19 +99,18 @@ async function getCategoriesFromDB() {
     }
     const dbCategories = data.map(item => item.name);
 
-    // Combine default categories with those from the database
     const defaultCategories = ['Lesson Plan', 'Scores', 'Daily Test'];
     const allCategories = [...new Set([...defaultCategories, ...dbCategories])];
     return allCategories;
 }
 
-// --- Document Listing and Table Population (UPDATED) ---
+// --- Document Listing and Table Population ---
 async function loadDocuments(showDeleteOption) {
     let documents = await getDocumentsFromDB();
     const tableBody = document.querySelector('#document-table tbody');
     if (!tableBody) return;
 
-    tableBody.innerHTML = ''; // Clear existing rows
+    tableBody.innerHTML = '';
 
     const filterTitle = document.getElementById('document-filter')?.value.toLowerCase() || '';
     const filterCategory = document.getElementById('category-filter')?.value.toLowerCase() || '';
@@ -125,7 +121,6 @@ async function loadDocuments(showDeleteOption) {
         return matchesTitle && matchesCategory;
     });
 
-    // Apply sorting based on currentSortColumn and currentSortDirection
     if (currentSortColumn) {
         filteredDocuments.sort((a, b) => {
             let valA, valB;
@@ -145,7 +140,7 @@ async function loadDocuments(showDeleteOption) {
 
     filteredDocuments.forEach((doc, index) => {
         const row = tableBody.insertRow();
-        row.insertCell(0).textContent = index + 1; // Automatic numbering
+        row.insertCell(0).textContent = index + 1;
         row.insertCell(1).textContent = doc.title;
         row.insertCell(2).textContent = doc.category;
 
@@ -178,7 +173,6 @@ async function loadDocuments(showDeleteOption) {
 }
 
 async function deleteDocument(idToDelete) {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
         alert('Application not fully initialized. Please refresh.');
@@ -187,20 +181,19 @@ async function deleteDocument(idToDelete) {
     const { error } = await supabase
         .from('documents')
         .delete()
-        .eq('id', idToDelete); // Delete where id matches
+        .eq('id', idToDelete);
 
     if (error) {
         console.error('Error deleting document:', error.message);
         alert('Failed to delete document. Please try again.');
     } else {
         alert('Document deleted successfully!');
-        await loadDocuments(true); // Reload the table
+        await loadDocuments(true);
     }
 }
 
-// --- Document Saving (Input Page - UPDATED) ---
+// --- Document Saving (Input Page) ---
 async function saveDocument() {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
         alert('Application not fully initialized. Please refresh.');
@@ -242,7 +235,7 @@ async function saveDocument() {
         titleInput.value = '';
         urlInput.value = '';
         categorySelect.value = '';
-        window.location.href = 'document.html'; // Redirect
+        window.location.href = 'document.html';
     }
 }
 
@@ -255,12 +248,12 @@ function isValidUrl(string) {
     }
 }
 
-// --- Category Management (Input Page - UPDATED) ---
+// --- Category Management (Input Page) ---
 async function loadCategoriesForInput() {
     const categorySelect = document.getElementById('document-category');
     if (!categorySelect) return;
 
-    const categories = await getCategoriesFromDB(); // Fetch from DB
+    const categories = await getCategoriesFromDB();
     categorySelect.innerHTML = '<option value="">Select Category</option>';
     categories.forEach(cat => {
         const option = document.createElement('option');
@@ -271,7 +264,6 @@ async function loadCategoriesForInput() {
 }
 
 async function addNewCategory() {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
         alert('Application not fully initialized. Please refresh.');
@@ -280,7 +272,7 @@ async function addNewCategory() {
     const newCategory = prompt('Enter new category name:');
     if (newCategory && newCategory.trim() !== '') {
         const trimmedCategory = newCategory.trim();
-        const categories = await getCategoriesFromDB(); // Fetch current categories
+        const categories = await getCategoriesFromDB();
 
         if (!categories.includes(trimmedCategory)) {
             const { error } = await supabase
@@ -294,7 +286,7 @@ async function addNewCategory() {
                 alert('Failed to add category. Please try again.');
             } else {
                 alert(`Category "${trimmedCategory}" added.`);
-                await loadCategoriesForInput(); // Reload categories
+                await loadCategoriesForInput();
             }
         } else {
             alert(`Category "${trimmedCategory}" already exists.`);
@@ -302,12 +294,12 @@ async function addNewCategory() {
     }
 }
 
-// --- Category Filter (Index & Document Pages - UPDATED) ---
+// --- Category Filter (Index & Document Pages) ---
 async function loadCategoriesForFilter(selectId) {
     const categoryFilterSelect = document.getElementById(selectId);
     if (!categoryFilterSelect) return;
 
-    const categories = await getCategoriesFromDB(); // Fetch from DB
+    const categories = await getCategoriesFromDB();
     categoryFilterSelect.innerHTML = '<option value="">Filter by Category</option>';
     categories.forEach(cat => {
         const option = document.createElement('option');
@@ -322,7 +314,7 @@ async function loadCategoriesForFilter(selectId) {
     });
 }
 
-// --- Popup for Google Drive Viewer (Keep as is) ---
+// --- Popup for Google Drive Viewer ---
 function setupPopup() {
     const popupOverlay = document.getElementById('popup-overlay');
     const closeButton = document.querySelector('.popup-content .close-button');
@@ -330,11 +322,11 @@ function setupPopup() {
     if (popupOverlay && closeButton) {
         closeButton.addEventListener('click', () => {
             popupOverlay.style.display = 'none';
-            document.getElementById('document-viewer').src = ''; // Clear iframe src
+            document.getElementById('document-viewer').src = '';
         });
 
         popupOverlay.addEventListener('click', (event) => {
-            if (event.target === popupOverlay) { // Close if clicked outside content
+            if (event.target === popupOverlay) {
                 popupOverlay.style.display = 'none';
                 document.getElementById('document-viewer').src = '';
             }
@@ -375,8 +367,6 @@ function setupFilterAndSort(tableId) {
             await loadDocuments(isDocumentPage);
         });
     }
-
-    // Category filter listener is set in loadCategoriesForFilter
 }
 
 async function sortDocuments(column) {
@@ -392,9 +382,8 @@ async function sortDocuments(column) {
 }
 
 
-// --- Authentication (Supabase Auth - REPLACED) ---
+// --- Authentication (Supabase Auth) ---
 async function login() {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
         alert('Application not fully initialized. Please refresh.');
@@ -405,10 +394,10 @@ async function login() {
     const passwordInput = document.getElementById('password');
     const errorMessage = document.getElementById('login-error-message');
 
-    const email = usernameInput.value.trim(); // Supabase Auth uses email for sign-in
+    const email = usernameInput.value.trim();
     const password = passwordInput.value.trim();
 
-    errorMessage.textContent = ''; // Clear previous errors
+    errorMessage.textContent = '';
 
     const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
@@ -421,7 +410,7 @@ async function login() {
         errorMessage.style.display = 'block';
     } else if (data.user) {
         console.log('User logged in:', data.user);
-        window.location.href = 'document.html'; // Redirect to dashboard
+        window.location.href = 'document.html';
     } else {
         errorMessage.textContent = 'Login failed. Please check your credentials.';
         errorMessage.style.display = 'block';
@@ -429,7 +418,6 @@ async function login() {
 }
 
 async function logout() {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
         alert('Application not fully initialized. Please refresh.');
@@ -442,18 +430,15 @@ async function logout() {
         alert('Failed to logout. Please try again.');
     } else {
         alert('Logged out successfully.');
-        window.location.href = 'login.html'; // Redirect to login page
+        window.location.href = 'login.html';
     }
 }
 
 async function checkLoginStatus() {
-    // Ensure supabase client is initialized before making calls
     if (!supabase) {
         console.error('Supabase client not initialized.');
-        // If not initialized, try to initialize before redirecting.
-        // This is a fallback and ideally initializeSupabase() should be called early via HTML.
         await initializeSupabase();
-        if (!supabase) { // If still not initialized, something is wrong, redirect
+        if (!supabase) {
              window.location.href = 'login.html';
              return;
         }
@@ -463,7 +448,7 @@ async function checkLoginStatus() {
 
     if (error) {
         console.error('Error getting session:', error.message);
-        window.location.href = 'login.html'; // Redirect on error
+        window.location.href = 'login.html';
         return;
     }
 
@@ -473,7 +458,6 @@ async function checkLoginStatus() {
 }
 
 // --- Global functions for inline onclick (e.g., sortButtons) ---
-// These are still needed if you call functions directly from HTML attributes
 window.sortDocuments = sortDocuments;
 window.showDocumentPopup = showDocumentPopup;
 window.login = login;
@@ -481,25 +465,6 @@ window.logout = logout;
 window.saveDocument = saveDocument;
 window.addNewCategory = addNewCategory;
 
-// Initial call to set up Supabase when the script loads
-// This makes sure `supabase` is ready before other DOMContentLoaded listeners fire their functions.
-// This is the most critical change from the previous iteration when using the API endpoint approach.
-// Each HTML file's DOMContentLoaded listener must start with `await initializeSupabase();`
-// followed by `await` for any subsequent functions that interact with Supabase.
-// For example, in login.html:
-/*
-    document.addEventListener('DOMContentLoaded', async () => {
-        await initializeSupabase(); // THIS MUST BE AWAITED FIRST
-        applyThemeFromLocalStorage();
-        setupThemeToggle();
-        document.getElementById('login-button').addEventListener('click', login);
-        async function redirectIfLoggedIn() {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (session) {
-                window.location.href = 'document.html';
-            }
-        }
-        redirectIfLoggedIn();
-    });
-*/
-// And similarly for index.html, document.html, input.html.
+// No initial call to initializeSupabase here.
+// Each HTML file's DOMContentLoaded listener is responsible for calling
+// `await initializeSupabase();` first, as shown in the updated HTML examples.
