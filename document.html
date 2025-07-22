@@ -59,18 +59,30 @@
         </div>
     </div>
     <div id="edit-popup-overlay" class="popup-overlay" style="display: none;">
-  <div class="popup-content">
-    <span class="close-button" onclick="closeEditPopup()">&times;</span>
-    <h2>Edit Document</h2>
-    <label>Title:</label>
-    <input type="text" id="edit-title"><br><br>
-    <label>Category:</label>
-    <select id="edit-category"></select><br><br>
-    <label>URL:</label>
-    <input type="url" id="edit-url"><br><br>
-    <button onclick="saveEditedDocument()">Save Changes</button>
-  </div>
-</div>
-<div id="toast-container"></div>
+      <div class="popup-content">
+        <span class="close-button" onclick="closeEditPopup()">&times;</span>
+        <h2>Edit Document</h2>
+        <label>Title:</label>
+        <input type="text" id="edit-title"><br><br>
+        <label>Category:</label>
+        <select id="edit-category"></select><br><br>
+        <label>URL:</label>
+        <input type="url" id="edit-url"><br><br>
+        <button onclick="saveEditedDocument()">Save Changes</button>
+      </div>
+    </div>
+
+    <div id="confirm-modal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <p id="confirm-message">Are you sure?</p>
+        <div class="modal-actions">
+          <button id="confirm-yes">Yes</button>
+          <button id="confirm-no">No</button>
+        </div>
+      </div>
+    </div>
+
+    
+    <div id="toast-container"></div>
 </body>
 </html>
