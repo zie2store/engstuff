@@ -198,10 +198,10 @@ async function loadDocuments(showDeleteOption) {
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
     deleteBtn.onclick = async () => {
-      const confirmed = confirm(`Are you sure you want to delete "${doc.title}"?`);
-      if (confirmed) {
-        await deleteDocument(doc.id);
-      }
+      const confirmed = await showConfirm(`Are you sure you want to delete "${doc.title}"?`);
+        if (confirmed) {
+          await deleteDocument(doc.id);
+        }
     };
     actionWrapper.appendChild(deleteBtn);
   }
@@ -683,5 +683,38 @@ function showToast(message, type = "info", duration = 3000) {
     toast.classList.remove("show");
     setTimeout(() => container.removeChild(toast), 400);
   }, duration);
+}
+
+//Confirm
+
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("confirm-modal");
+    const messageBox = document.getElementById("confirm-message");
+    const yesBtn = document.getElementById("confirm-yes");
+    const noBtn = document.getElementById("confirm-no");
+
+    messageBox.textContent = message;
+    modal.style.display = "flex";
+
+    const cleanup = () => {
+      yesBtn.removeEventListener("click", onYes);
+      noBtn.removeEventListener("click", onNo);
+      modal.style.display = "none";
+    };
+
+    const onYes = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    const onNo = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    yesBtn.addEventListener("click", onYes);
+    noBtn.addEventListener("click", onNo);
+  });
 }
 
