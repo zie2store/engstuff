@@ -655,6 +655,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 });
+//new login via index.html
+const toggle = document.getElementById('toggle-password');
+const passwordInput = document.getElementById('password');
+if (toggle && passwordInput) {
+  toggle.addEventListener('change', () => {
+    passwordInput.type = toggle.checked ? 'text' : 'password';
+  });
+}
+
 //login auth
 async function setupAuthAction() {
   await initializeSupabase(); // Ensure Supabase is ready
@@ -704,6 +713,13 @@ async function setupAuthAction() {
     }
   }
 }
+
+const loginBtn = document.getElementById("login-button");
+if (loginBtn) {
+  loginBtn.addEventListener("click", login); // login() is your function from script.js
+}
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   await setupAuthAction();
 });
