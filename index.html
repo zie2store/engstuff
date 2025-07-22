@@ -51,11 +51,26 @@
         </div>
     </div>
 
-    <div id="login-modal" class="modal" style="display: none;">
+<!-- Login Modal -->
+<div id="login-modal" class="modal" style="display: none;">
   <div class="modal-content">
     <span class="close-button" onclick="closeLoginModal()">&times;</span>
-    <div id="login-form-container">Loading...</div>
+    <div id="login-form-container">
+      <h3>Sign In</h3>
+      <div class="form-group">
+        <label for="username">Email</label>
+        <input type="text" id="username" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" />
+        <label><input type="checkbox" id="toggle-password" /> Show Password</label>
+      </div>
+      <button id="login-button">Login</button>
+      <p id="login-error-message" class="error-message"></p>
+    </div>
   </div>
-</div>  
+</div>
+
 </body>
 </html>
