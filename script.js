@@ -166,45 +166,48 @@ async function loadDocuments(showDeleteOption) {
       doc.category && doc.category.trim() !== "" ? doc.category : "Uncategorized";
 
     const viewCell = row.insertCell(3);
-    const viewLink = document.createElement("a");
-    viewLink.href = "#";
-    viewLink.textContent = "View";
-    viewLink.onclick = (event) => {
-      event.preventDefault();
-      showDocumentPopup(doc.url);
-    };
-    viewCell.appendChild(viewLink);
+const actionWrapper = document.createElement("div");
+actionWrapper.classList.add("view-edit-delete");
 
- 
+// View link
+const viewLink = document.createElement("a");
+viewLink.href = "#";
+viewLink.textContent = "View";
+viewLink.onclick = (event) => {
+  event.preventDefault();
+  showDocumentPopup(doc.url);
+};
+actionWrapper.appendChild(viewLink);
 
-    if (showDeleteOption) {
+if (showDeleteOption) {
+  // Edit button
+  const editSeparator = document.createElement("span");
+  editSeparator.textContent = " | ";
+  actionWrapper.appendChild(editSeparator);
 
-       // Add EDIT button (safely inside the row)
-        const editSeparator = document.createElement("span");
-        editSeparator.textContent = " | ";
-        viewCell.appendChild(editSeparator);
-        
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.classList.add("edit-btn");
-        editBtn.onclick = () => {
-          openEditPopup(doc);
-        };
-        viewCell.appendChild(editBtn);
-        
-      const deleteLink = document.createElement("span");
-      deleteLink.textContent = " | ";
-      viewCell.appendChild(deleteLink);
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.onclick = () => openEditPopup(doc);
+  actionWrapper.appendChild(editBtn);
 
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
-      deleteBtn.classList.add("delete-btn");
-      deleteBtn.onclick = async () => {
-        if (confirm(`Are you sure you want to delete "${doc.title}"?`)) {
-          await deleteDocument(doc.id);
-        }
-      };
-      viewCell.appendChild(deleteBtn);
+  // Delete button
+  const deleteSeparator = document.createElement("span");
+  deleteSeparator.textContent = " | ";
+  actionWrapper.appendChild(deleteSeparator);
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.onclick = async () => {
+    const confirmed = confirm(`Are you sure you want to delete "${doc.title}"?`);
+    if (confirmed) {
+      await deleteDocument(doc.id);
+    }
+  };
+  actionWrapper.appendChild(deleteBtn);
+}
+
+viewCell.appendChild(actionWrapper);
+
     }
   });
 }
