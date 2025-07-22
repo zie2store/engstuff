@@ -192,7 +192,30 @@ async function loadDocuments(showDeleteOption) {
     }
   });
 }
+
+async function deleteDocument(idToDelete) {
+  if (!supabase) {
+    console.error('Supabase client not initialized.');
+    alert('Application not fully initialized. Please refresh.');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('documents')
+    .delete()
+    .eq('id', idToDelete);
+
+  if (error) {
+    console.error('Error deleting document:', error.message);
+    alert('Failed to delete document. Please try again.');
+  } else {
+    alert('Document deleted successfully!');
+    await loadDocuments(true);
+  }
+}
+
 window.deleteDocument = deleteDocument;
+
 
 // --- Document Saving (Input Page) ---
 async function saveDocument() {
