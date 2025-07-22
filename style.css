@@ -58,8 +58,23 @@ h1 {
     margin: 0 5px;
 }
 
-.theme-switch #night-mode-icon::before { content: '🌙'; }
-.theme-switch #day-mode-icon::before { content: '☀️'; }
+/* Default: Light Mode (show moon icon) */
+#night-mode-icon::before {
+  content: '🌙';
+  display: inline;
+}
+#day-mode-icon::before {
+  content: '☀️';
+  display: none;
+}
+
+/* When in dark mode (show sun icon) */
+body.dark-mode #night-mode-icon::before {
+  display: none;
+}
+body.dark-mode #day-mode-icon::before {
+  display: inline;
+}
 
 
 .toggle-checkbox {
