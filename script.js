@@ -561,13 +561,16 @@ async function setupAuthAction() {
   const { data: { session } } = await supabase.auth.getSession();
 
   if (session?.user) {
-    container.innerHTML = `<a href="#" id="logout-link" class="page-title">SIGN OUT</a>`;
+    container.innerHTML = `
+  <span class="page-title">Hello, ${session.user.user_metadata?.displayName || session.user.email}</span> |
+  <a href="#" id="logout-link" class="page-title">Sign Out</a>
+`;
     document.getElementById("logout-link").addEventListener("click", async (e) => {
       e.preventDefault();
       await logout();
     });
   } else {
-    container.innerHTML = `<a href="#" id="open-login" class="page-title">SIGN IN</a>`;
+    container.innerHTML = `<a href="#" id="open-login" class="page-title">Sign In</a>`;
     document.getElementById("open-login").addEventListener("click", (e) => {
       e.preventDefault();
       document.getElementById("login-modal").style.display = "flex";
