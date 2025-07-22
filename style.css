@@ -718,7 +718,7 @@ body.dark-mode .modal-content .close-button {
 /* Dark mode compatibility */
 body.dark-mode .view-edit-delete button,
 body.dark-mode .view-edit-delete a {
-  color: #66aaff;
+  color: #fff;
 }
 
 body.dark-mode .view-edit-delete button:hover,
