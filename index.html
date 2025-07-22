@@ -58,26 +58,32 @@
   </div>
 </div>
 
-    <script>
-document.getElementById("open-login").addEventListener("click", async (e) => {
-  e.preventDefault();
-  const modal = document.getElementById("login-modal");
-  const container = document.getElementById("login-form-container");
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const openLoginBtn = document.getElementById("open-login");
+  if (!openLoginBtn) return; // prevent errors if element doesn't exist
 
-  try {
-    const response = await fetch("login.html");
-    const html = await response.text();
-    container.innerHTML = html;
-    modal.style.display = "flex";
-  } catch (err) {
-    container.innerHTML = "<p>Error loading login form</p>";
-  }
+  openLoginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const modal = document.getElementById("login-modal");
+    const container = document.getElementById("login-form-container");
+
+    try {
+      const response = await fetch("login.html");
+      const html = await response.text();
+      container.innerHTML = html;
+      modal.style.display = "flex";
+    } catch (err) {
+      container.innerHTML = "<p>Error loading login form</p>";
+    }
+  });
 });
 
 function closeLoginModal() {
   document.getElementById("login-modal").style.display = "none";
 }
 </script>
+
 
     
 </body>
