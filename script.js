@@ -175,20 +175,23 @@ async function loadDocuments(showDeleteOption) {
     };
     viewCell.appendChild(viewLink);
 
-    // Add EDIT button (safely inside the row)
-const editSeparator = document.createElement("span");
-editSeparator.textContent = " | ";
-viewCell.appendChild(editSeparator);
-
-const editBtn = document.createElement("button");
-editBtn.textContent = "Edit";
-editBtn.classList.add("edit-btn");
-editBtn.onclick = () => {
-  openEditPopup(doc);
-};
-viewCell.appendChild(editBtn);
+ 
 
     if (showDeleteOption) {
+
+       // Add EDIT button (safely inside the row)
+        const editSeparator = document.createElement("span");
+        editSeparator.textContent = " | ";
+        viewCell.appendChild(editSeparator);
+        
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.classList.add("edit-btn");
+        editBtn.onclick = () => {
+          openEditPopup(doc);
+        };
+        viewCell.appendChild(editBtn);
+        
       const deleteLink = document.createElement("span");
       deleteLink.textContent = " | ";
       viewCell.appendChild(deleteLink);
