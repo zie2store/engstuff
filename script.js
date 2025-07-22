@@ -192,7 +192,7 @@ async function loadDocuments(showDeleteOption) {
     }
   });
 }
-
+window.deleteDocument = deleteDocument;
 
 // --- Document Saving (Input Page) ---
 async function saveDocument() {
@@ -483,7 +483,6 @@ window.login = login;
 window.logout = logout;
 window.saveDocument = saveDocument;
 window.addNewCategory = addNewCategory;
-window.deleteDocument = deleteDocument;
 
 // --- DOMContentLoaded Listeners (Moved from HTML to script.js) ---
 document.addEventListener('DOMContentLoaded', async () => {
