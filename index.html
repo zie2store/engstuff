@@ -56,46 +56,6 @@
     <span class="close-button" onclick="closeLoginModal()">&times;</span>
     <div id="login-form-container">Loading...</div>
   </div>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const openLoginBtn = document.getElementById("open-login");
-  if (!openLoginBtn) return; // prevent errors if element doesn't exist
-
-  openLoginBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    const modal = document.getElementById("login-modal");
-    const container = document.getElementById("login-form-container");
-
-    try {
-      const response = await fetch("login.html");
-      const html = await response.text();
-      container.innerHTML = html;
-      modal.style.display = "flex";
-    } catch (err) {
-      container.innerHTML = "<p>Error loading login form</p>";
-    }
-  });
-});
-
-function closeLoginModal() {
-  document.getElementById("login-modal").style.display = "none";
-}
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('toggle-password');
-    const passwordInput = document.getElementById('password');
-
-    if (toggle && passwordInput) {
-      toggle.addEventListener('change', () => {
-        passwordInput.type = toggle.checked ? 'text' : 'password';
-      });
-    }
-  });
-</script>
-
-
-    
+</div>  
 </body>
 </html>
