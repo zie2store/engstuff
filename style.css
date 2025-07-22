@@ -127,7 +127,7 @@ body.dark-mode .toggle-checkbox:checked + .toggle-label {
     float: left;
     padding-right: 20px;
     border-right: 1px solid #eee;
-    min-height: 200px; /* Adjust as needed */
+    min-height: 300px; /* Adjust as needed */
 }
 
 .sidebar a, .sidebar button {
@@ -694,7 +694,7 @@ body.dark-mode .modal-content .close-button {
 /* Button Row (View | Edit | Delete) */
 .view-edit-delete button,
 .view-edit-delete a {
-  background: none;
+  background: #007bff;
   border: none;
   padding: 4px 6px;
   margin: 0 2px;
