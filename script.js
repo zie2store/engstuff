@@ -175,6 +175,19 @@ async function loadDocuments(showDeleteOption) {
     };
     viewCell.appendChild(viewLink);
 
+    // Add EDIT button (safely inside the row)
+const editSeparator = document.createElement("span");
+editSeparator.textContent = " | ";
+viewCell.appendChild(editSeparator);
+
+const editBtn = document.createElement("button");
+editBtn.textContent = "Edit";
+editBtn.classList.add("edit-btn");
+editBtn.onclick = () => {
+  openEditPopup(doc);
+};
+viewCell.appendChild(editBtn);
+
     if (showDeleteOption) {
       const deleteLink = document.createElement("span");
       deleteLink.textContent = " | ";
@@ -214,20 +227,6 @@ async function deleteDocument(idToDelete) {
     await loadDocuments(true);
   }
 }
-
-// Add separator
-const editSeparator = document.createElement("span");
-editSeparator.textContent = " | ";
-viewCell.appendChild(editSeparator);
-
-// Add Edit button
-const editBtn = document.createElement("button");
-editBtn.textContent = "Edit";
-editBtn.classList.add("edit-btn");
-editBtn.onclick = () => {
-  openEditPopup(doc); // 👈 call function with doc data
-};
-viewCell.appendChild(editBtn);
 
 //Edit Logic
 
