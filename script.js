@@ -168,7 +168,7 @@ async function loadDocuments(showDeleteOption) {
     const viewCell = row.insertCell(3);
     const viewLink = document.createElement("a");
     viewLink.href = "#";
-    viewLink.textContent = "Click";
+    viewLink.textContent = "View";
     viewLink.onclick = (event) => {
       event.preventDefault();
       showDocumentPopup(doc.url);
