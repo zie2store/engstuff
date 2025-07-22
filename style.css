@@ -150,6 +150,15 @@ body.dark-mode .toggle-checkbox:checked + .toggle-label {
     background-color: #f0f0f0;
 }
 
+.sidebar a.active {
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+
 .main-content {
     margin-left: 220px;
     padding-left: 20px;
