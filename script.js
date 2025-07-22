@@ -28,7 +28,7 @@ async function initializeSupabase() {
 
     } catch (error) {
         console.error('CRITICAL ERROR: Failed to initialize Supabase client. Application might not function correctly.', error);
-        alert('Application failed to load necessary configurations. Please try again later. Check console for details.');
+        showToast('Application failed to load necessary configurations. Please try again later. Check console for details.');
         return;
     }
 
@@ -213,7 +213,7 @@ async function loadDocuments(showDeleteOption) {
 async function deleteDocument(idToDelete) {
   if (!supabase) {
     console.error('Supabase client not initialized.');
-    alert('Application not fully initialized. Please refresh.');
+    showToast('Application not fully initialized. Please refresh.');
     return;
   }
 
@@ -224,9 +224,9 @@ async function deleteDocument(idToDelete) {
 
   if (error) {
     console.error('Error deleting document:', error.message);
-    alert('Failed to delete document. Please try again.');
+    showToast('Failed to delete document. Please try again.');
   } else {
-    alert('Document deleted successfully!');
+    showToast('Document deleted successfully!');
     await loadDocuments(true);
   }
 }
@@ -271,7 +271,7 @@ async function saveEditedDocument() {
   const newCategory = document.getElementById("edit-category").value;
 
   if (!newTitle || !newUrl || !newCategory) {
-    alert("Please fill in all fields.");
+    showToast("Please fill in all fields.");
     return;
   }
 
@@ -281,12 +281,12 @@ async function saveEditedDocument() {
     .eq("id", currentEditId);
 
   if (error) {
-    alert("Failed to update document.");
+    showToast("Failed to update document.");
     console.error(error);
     return;
   }
 
-  alert("Document updated.");
+  showToast("Document updated.");
   closeEditPopup();
   await loadDocuments(true);
 }
@@ -296,7 +296,7 @@ async function saveEditedDocument() {
 async function saveDocument() {
     if (!supabase) {
         console.error('Supabase client not initialized.');
-        alert('Application not fully initialized. Please refresh.');
+        showToast('Application not fully initialized. Please refresh.');
         return;
     }
 
@@ -309,15 +309,15 @@ async function saveDocument() {
     const url = urlInput.value.trim();
 
     if (!title || !category || !url) {
-        alert('Please fill in all fields.');
+        showToast('Please fill in all fields.');
         return;
     }
     if (!isValidUrl(url)) {
-        alert('Please enter a valid URL (e.g., starting with http:// or https://).');
+        showToast('Please enter a valid URL (e.g., starting with http:// or https://).');
         return;
     }
     if (!url.includes('drive.google.com')) {
-        alert('Please enter a Google Drive URL.');
+        showToast('Please enter a Google Drive URL.');
         return;
     }
 
@@ -327,7 +327,7 @@ async function saveDocument() {
             } = await supabase.auth.getUser();
             
             if (userError || !user) {
-              alert('Cannot get user info. Please re-login.');
+              showToast('Cannot get user info. Please re-login.');
               return;
             }
             
@@ -337,9 +337,9 @@ async function saveDocument() {
 
     if (error) {
         console.error('Error saving document:', error.message);
-        alert('Failed to save document. Please try again.');
+        showToast('Failed to save document. Please try again.');
     } else {
-        alert('Document saved successfully!');
+        showToast('Document saved successfully!');
         titleInput.value = '';
         urlInput.value = '';
         categorySelect.value = '';
@@ -374,7 +374,7 @@ async function loadCategoriesForInput() {
 async function addNewCategory() {
     if (!supabase) {
         console.error('Supabase client not initialized.');
-        alert('Application not fully initialized. Please refresh.');
+        showToast('Application not fully initialized. Please refresh.');
         return;
     }
     const newCategory = prompt('Enter new category name:');
@@ -391,13 +391,13 @@ async function addNewCategory() {
 
             if (error) {
                 console.error('Error adding category:', error.message);
-                alert('Failed to add category. Please try again.');
+                showToast('Failed to add category. Please try again.');
             } else {
-                alert(`Category "${trimmedCategory}" added.`);
+                showToast(`Category "${trimmedCategory}" added.`);
                 await loadCategoriesForInput();
             }
         } else {
-            alert(`Category "${trimmedCategory}" already exists.`);
+            showToast(`Category "${trimmedCategory}" already exists.`);
         }
     }
 }
@@ -495,7 +495,7 @@ async function login() {
   await initializeSupabase();
   if (!supabase) {
     console.error('Supabase client not initialized.');
-    alert('App not ready. Please refresh.');
+    showToast('App not ready. Please refresh.');
     return;
   }
 
@@ -522,7 +522,7 @@ async function login() {
       errorMessage.style.display = 'block';
     }
   } else if (data.user) {
-    alert("Login successful!");
+    showToast("Login successful!");
     closeLoginModal();
     window.location.href = 'document.html';
   }
@@ -531,15 +531,15 @@ async function login() {
 async function logout() {
   if (!supabase) {
     console.error('Supabase client not initialized.');
-    alert('App not ready. Please refresh.');
+    showToast('App not ready. Please refresh.');
     return;
   }
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.error('Logout error:', error.message);
-    alert('Failed to logout. Please try again.');
+    showToast('Failed to logout. Please try again.');
   } else {
-    alert('Logged out successfully.');
+    showToast('Logged out successfully.');
     location.reload();
   }
 }
@@ -548,7 +548,7 @@ async function checkLoginStatus() {
   await initializeSupabase();
   const { data: { session }, error } = await supabase.auth.getSession();
   if (error || !session) {
-    alert('Please log in.');
+    showToast('Please log in.');
     window.location.href = 'index.html'; // fallback
   }
 }
@@ -630,4 +630,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("logout-button")?.addEventListener("click", logout);
   }
 });
+
+//TOAST
+function showToast(message, type = "info", duration = 3000) {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  // Force reflow to trigger transition
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+
+  // Auto-remove after duration
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => container.removeChild(toast), 400);
+  }, duration);
+}
 
