@@ -630,6 +630,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("logout-button")?.addEventListener("click", logout);
   }
 });
+//Enter to Login
+document.addEventListener('DOMContentLoaded', () => {
+  const passwordInput = document.getElementById('password');
+  const loginButton = document.getElementById('login-button');
+
+  if (passwordInput && loginButton) {
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        loginButton.click(); // ⬅️ simulate button click
+      }
+    });
+  }
+});
 
 //TOAST
 function showToast(message, type = "info", duration = 3000) {
