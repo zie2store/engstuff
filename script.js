@@ -208,7 +208,7 @@ async function loadDocuments(showDeleteOption) {
 
   viewCell.appendChild(actionWrapper);
 }); // ✅ closes forEach
-
+}
 // --- Document Delete (Dodument Page) ---
 async function deleteDocument(idToDelete) {
   if (!supabase) {
