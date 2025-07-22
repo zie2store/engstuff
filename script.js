@@ -489,237 +489,145 @@ async function sortDocuments(column) {
     await loadDocuments(isDocumentPage);
 }
 
-
 // --- Authentication (Supabase Auth) ---
+
 async function login() {
-    await initializeSupabase(); // ⬅️ Pastikan dipanggil ulang di sini!
-
-    if (!supabase) {
-        console.error('Supabase client not initialized.');
-        alert('Application not fully initialized. Please refresh.');
-        return;
-    }
-
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const errorMessage = document.getElementById('login-error-message');
-
-    const email = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
-
-    errorMessage.textContent = '';
-
-    // Simple validation
-    if (!email || !password) {
-        errorMessage.textContent = 'Please enter both username and password.';
-        errorMessage.style.display = 'block';
-        return;
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-    });
-
-    if (error) {
-        console.error('Login error:', error.message);
-        errorMessage.textContent = `Login failed: ${error.message}`;
-        errorMessage.style.display = 'block';
-    } else if (data.user) {
-        console.log('User logged in:', data.user);
-        window.location.href = 'document.html';
-    } else {
-        errorMessage.textContent = 'Login failed. Please check your credentials.';
-        errorMessage.style.display = 'block';
-    }
-}
-
-async function logout() {
-    if (!supabase) {
-        console.error('Supabase client not initialized.');
-        alert('Application not fully initialized. Please refresh.');
-        return;
-    }
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-        console.error('Logout error:', error.message);
-        alert('Failed to logout. Please try again.');
-    } else {
-        alert('Logged out successfully.');
-        window.location.href = 'login.html';
-    }
-}
-
-async function checkLoginStatus() {
-    if (!supabase) {
-        console.error('Supabase client not initialized.');
-        await initializeSupabase();
-        if (!supabase) {
-             window.location.href = 'login.html';
-             return;
-        }
-    }
-
-    const { data: { session }, error } = await supabase.auth.getSession();
-
-    if (error) {
-        console.error('Error getting session:', error.message);
-        window.location.href = 'login.html';
-        return;
-    }
-
-    if (!session) {
-        window.location.href = 'login.html';
-    }
-}
-
-// --- Global functions for inline onclick (e.g., sortButtons) ---
-window.sortDocuments = sortDocuments;
-window.showDocumentPopup = showDocumentPopup;
-window.login = login;
-window.logout = logout;
-window.saveDocument = saveDocument;
-window.addNewCategory = addNewCategory;
-window.deleteDocument = deleteDocument;
-window.openEditPopup = openEditPopup;
-window.closeEditPopup = closeEditPopup;
-window.saveEditedDocument = saveEditedDocument;
-
-
-// --- DOMContentLoaded Listeners (Moved from HTML to script.js) ---
-document.addEventListener('DOMContentLoaded', async () => {
-    const pathname = window.location.pathname;
-
-    await initializeSupabase(); // Initialize Supabase FIRST for ALL pages
-
-    applyThemeFromLocalStorage();
-    setupThemeToggle();
-    setupPopup(); // Popup is global, set up on all pages that might use it
-
-    if (pathname.includes('login.html') || pathname === '/' || pathname === '/index.html') {
-        // Login page specific setup or root/index if direct access
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const loginButton = document.getElementById('login-button');
-
-        if (loginButton) {
-            loginButton.addEventListener('click', login);
-        }
-
-        // Check if already logged in and redirect for login.html
-        if (pathname.includes('login.html')) {
-            async function redirectIfLoggedIn() {
-                const { data: { session }, error } = await supabase.auth.getSession();
-                if (session) {
-                    window.location.href = 'document.html';
-                }
-            }
-            redirectIfLoggedIn();
-        }
-
-        // Index page specific setup (public view)
-        if (pathname === '/' || pathname.includes('index.html')) {
-            await loadDocuments(false); // Load documents for public view (no delete)
-            await loadCategoriesForFilter('category-filter');
-            setupFilterAndSort('document-table');
-        }
-
-    } else if (pathname.includes('document.html')) {
-        // Document management page specific setup (logged-in view)
-        await checkLoginStatus(); // Redirects if not logged in
-        await loadDocuments(true); // Load documents with delete option
-        await loadCategoriesForFilter('category-filter');
-        setupFilterAndSort('document-table');
-        const logoutButton = document.getElementById('logout-button');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', logout);
-        }
-
-    } else if (pathname.includes('input.html')) {
-        // Input page specific setup
-        await checkLoginStatus(); // Redirects if not logged in
-        await loadCategoriesForInput();
-        const saveButton = document.getElementById('save-document-button');
-        const addCategoryButton = document.getElementById('add-category-button');
-        const logoutButton = document.getElementById('logout-button');
-
-        if (saveButton) {
-            saveButton.addEventListener('click', saveDocument);
-        }
-        if (addCategoryButton) {
-            addCategoryButton.addEventListener('click', addNewCategory);
-        }
-        if (logoutButton) {
-            logoutButton.addEventListener('click', logout);
-        }
-    }
-});
-//new login via index.html
-const toggle = document.getElementById('toggle-password');
-const passwordInput = document.getElementById('password');
-if (toggle && passwordInput) {
-  toggle.addEventListener('change', () => {
-    passwordInput.type = toggle.checked ? 'text' : 'password';
-  });
-}
-
-//login auth
-async function setupAuthAction() {
-  await initializeSupabase(); // Ensure Supabase is ready
-
-  const { data: { session } } = await supabase.auth.getSession();
-  const container = document.getElementById("auth-action");
-
-  if (!container) {
-    console.warn("#auth-action element not found.");
+  await initializeSupabase();
+  if (!supabase) {
+    console.error('Supabase client not initialized.');
+    alert('App not ready. Please refresh.');
     return;
   }
 
-  if (session?.user) {
-    // ✅ User is logged in → show SIGN OUT
-    container.innerHTML = `<a href="#" id="logout-link" class="page-title">SIGN OUT</a>`;
+  const email = document.getElementById('username')?.value.trim();
+  const password = document.getElementById('password')?.value.trim();
+  const errorMessage = document.getElementById('login-error-message');
 
-    const logoutBtn = document.getElementById("logout-link");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        await supabase.auth.signOut();
-        alert("You have been signed out.");
-        location.reload();
-      });
+  if (errorMessage) errorMessage.textContent = '';
+
+  if (!email || !password) {
+    if (errorMessage) {
+      errorMessage.textContent = 'Please enter both email and password.';
+      errorMessage.style.display = 'block';
     }
+    return;
+  }
 
-  } else {
-    // ✅ User not logged in → show SIGN IN
-    container.innerHTML = `<a href="#" id="open-login" class="page-title">SIGN IN</a>`;
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    const loginBtn = document.getElementById("open-login");
-    if (loginBtn) {
-      loginBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        const modal = document.getElementById("login-modal");
-        const container = document.getElementById("login-form-container");
-
-        try {
-          const response = await fetch("login.html");
-          const html = await response.text();
-          container.innerHTML = html;
-          modal.style.display = "flex";
-        } catch (err) {
-          container.innerHTML = "<p>Error loading login form</p>";
-        }
-      });
+  if (error) {
+    console.error('Login error:', error.message);
+    if (errorMessage) {
+      errorMessage.textContent = `Login failed: ${error.message}`;
+      errorMessage.style.display = 'block';
     }
+  } else if (data.user) {
+    alert("Login successful!");
+    closeLoginModal();
+    window.location.href = 'document.html';
   }
 }
 
-const loginBtn = document.getElementById("login-button");
-if (loginBtn) {
-  loginBtn.addEventListener("click", login); // login() is your function from script.js
+async function logout() {
+  if (!supabase) {
+    console.error('Supabase client not initialized.');
+    alert('App not ready. Please refresh.');
+    return;
+  }
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.error('Logout error:', error.message);
+    alert('Failed to logout. Please try again.');
+  } else {
+    alert('Logged out successfully.');
+    location.reload();
+  }
 }
 
+async function checkLoginStatus() {
+  await initializeSupabase();
+  const { data: { session }, error } = await supabase.auth.getSession();
+  if (error || !session) {
+    alert('Please log in.');
+    window.location.href = 'index.html'; // fallback
+  }
+}
+
+async function setupAuthAction() {
+  await initializeSupabase();
+  const container = document.getElementById("auth-action");
+  if (!container) return;
+
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (session?.user) {
+    container.innerHTML = `<a href="#" id="logout-link" class="page-title">SIGN OUT</a>`;
+    document.getElementById("logout-link").addEventListener("click", async (e) => {
+      e.preventDefault();
+      await logout();
+    });
+  } else {
+    container.innerHTML = `<a href="#" id="open-login" class="page-title">SIGN IN</a>`;
+    document.getElementById("open-login").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("login-modal").style.display = "flex";
+    });
+  }
+}
+
+// Show/hide password toggle
+function setupPasswordToggle() {
+  const toggle = document.getElementById("toggle-password");
+  const input = document.getElementById("password");
+  if (toggle && input) {
+    toggle.addEventListener("change", () => {
+      input.type = toggle.checked ? "text" : "password";
+    });
+  }
+}
+
+function closeLoginModal() {
+  const modal = document.getElementById("login-modal");
+  if (modal) modal.style.display = "none";
+}
+
+// Handle login form button
+function setupLoginForm() {
+  const loginBtn = document.getElementById("login-button");
+  if (loginBtn) loginBtn.addEventListener("click", login);
+  setupPasswordToggle();
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await setupAuthAction();
+  const pathname = window.location.pathname;
+
+  await initializeSupabase();
+  await setupAuthAction(); // 👈 this is your login/signout logic
+
+  applyThemeFromLocalStorage();
+  setupThemeToggle();
+  setupPopup();
+  setupLoginForm(); // 👈 needed to bind login button and toggle
+
+  if (pathname.includes("index.html") || pathname === "/") {
+    await loadDocuments(false);
+    await loadCategoriesForFilter("category-filter");
+    setupFilterAndSort("document-table");
+  }
+
+  if (pathname.includes("document.html")) {
+    await checkLoginStatus();
+    await loadDocuments(true);
+    await loadCategoriesForFilter("category-filter");
+    setupFilterAndSort("document-table");
+  }
+
+  if (pathname.includes("input.html")) {
+    await checkLoginStatus();
+    await loadCategoriesForInput();
+    document.getElementById("save-document-button")?.addEventListener("click", saveDocument);
+    document.getElementById("add-category-button")?.addEventListener("click", addNewCategory);
+    document.getElementById("logout-button")?.addEventListener("click", logout);
+  }
 });
+
