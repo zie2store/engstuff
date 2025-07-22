@@ -655,3 +655,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 });
+//login auth
+async function setupAuthAction() {
+  await initializeSupabase(); // Ensure Supabase is ready
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const container = document.getElementById("auth-action");
+
+  if (session?.user) {
+    // User is logged in → show SIGN OUT
+    container.innerHTML = `<a href="#" id="logout-link" class="page-title">SIGN OUT</a>`;
+    document.getElementById("logout-link").addEventListener("click", async (e) => {
+      e.preventDefault();
+      await supabase.auth.signOut();
+      alert("You have been signed out.");
+      location.reload();
+    });
+  } else {
+    // User not logged in → show SIGN IN
+    container.innerHTML = `<a href="#" id="open-login" class="page-title">SIGN IN</a>`;
+    document.getElementById("open-login").addEventListener("click", async (e) => {
+      e.preventDefault();
+      const modal = document.getElementById("login-modal");
+      const container = document.getElementById("login-form-container");
+
+      try {
+        const response = await fetch("login.html");
+        const html = await response.text();
+        container.innerHTML = html;
+        modal.style.display = "flex";
+      } catch (err) {
+        container.innerHTML = "<p>Error loading login form</p>";
+      }
+    });
+  }
+}
+document.addEventListener("DOMContentLoaded", async () => {
+  await setupAuthAction();
+});
