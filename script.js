@@ -647,6 +647,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+//Sidebar
+document.addEventListener("DOMContentLoaded", () => {
+  const path = window.location.pathname;
+
+  if (path.includes("document.html")) {
+    const manageLink = document.getElementById("nav-manage");
+    if (manageLink) manageLink.classList.add("active");
+  }
+
+  if (path.includes("input.html")) {
+    const addLink = document.getElementById("nav-add");
+    if (addLink) addLink.classList.add("active");
+  }
+});
+
 
 //TOAST
 function showToast(message, type = "info", duration = 3000) {
