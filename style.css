@@ -468,3 +468,13 @@ body.dark-mode .close-button {
         font-size: 1.5em;
     }
 }
+
+/* Default placeholder style */
+input::placeholder {
+  color: #888;
+}
+
+/* Dark mode override */
+body.dark-mode input::placeholder {
+  color: #ccc;
+}
