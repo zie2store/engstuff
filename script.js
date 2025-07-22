@@ -105,94 +105,94 @@ async function getCategoriesFromDB() {
     return allCategories;
 }
 
-// --- Document Listing and Table Population ---
 async function loadDocuments(showDeleteOption) {
-    let documents = await getDocumentsFromDB();
-    const tableBody = document.querySelector('#document-table tbody');
-    if (!tableBody) return;
+  console.log("🚀 loadDocuments called, showDeleteOption =", showDeleteOption);
 
-    tableBody.innerHTML = '';
+  const tableBody = document.querySelector("#document-table tbody");
+  if (!tableBody) {
+    console.error("❗ Table body (#document-table tbody) not found");
+    return;
+  }
 
-    const filterTitle = document.getElementById('document-filter')?.value.toLowerCase() || '';
-    const filterCategory = document.getElementById('category-filter')?.value.toLowerCase() || '';
+  console.log("✅ tableBody found:", tableBody);
 
-    let filteredDocuments = documents.filter(doc => {
-        const matchesTitle = doc.title.toLowerCase().includes(filterTitle);
-        const docCategory = (doc.category || '').toLowerCase();
-        const matchesCategory = filterCategory === '' || doc.category.toLowerCase() === filterCategory;
-        return matchesTitle && matchesCategory;
+  // Langsung ambil dari Supabase (tanpa .order dulu)
+  const { data: documents, error } = await supabase
+    .from("documents")
+    .select("id, title, category, url");
+
+  if (error) {
+    console.error("❌ Error fetching documents:", error);
+    return;
+  }
+
+  console.log("📄 Fetched documents from Supabase:", documents);
+
+  tableBody.innerHTML = "";
+
+  const filterTitle = document.getElementById("document-filter")?.value.toLowerCase() || "";
+  const filterCategory = document.getElementById("category-filter")?.value.toLowerCase() || "";
+
+  let filteredDocuments = documents.filter((doc) => {
+    const matchesTitle = (doc.title || "").toLowerCase().includes(filterTitle);
+    const docCategory = (doc.category || "").toLowerCase();
+    const matchesCategory = filterCategory === "" || docCategory === filterCategory;
+    return matchesTitle && matchesCategory;
+  });
+
+  // Optional: sorting logic
+  if (currentSortColumn) {
+    filteredDocuments.sort((a, b) => {
+      let valA, valB;
+      if (currentSortColumn === "title") {
+        valA = (a.title || "").toLowerCase();
+        valB = (b.title || "").toLowerCase();
+      } else if (currentSortColumn === "category") {
+        valA = (a.category || "").toLowerCase();
+        valB = (b.category || "").toLowerCase();
+      }
+
+      if (valA < valB) return currentSortDirection === "asc" ? -1 : 1;
+      if (valA > valB) return currentSortDirection === "asc" ? 1 : -1;
+      return 0;
     });
+  }
 
-    if (currentSortColumn) {
-        filteredDocuments.sort((a, b) => {
-            let valA, valB;
-            if (currentSortColumn === 'title') {
-                valA = a.title.toLowerCase();
-                valB = b.title.toLowerCase();
-            } else if (currentSortColumn === 'category') {
-                valA = a.category.toLowerCase();
-                valB = b.category.toLowerCase();
-            }
+  filteredDocuments.forEach((doc, index) => {
+    const row = tableBody.insertRow();
+    row.insertCell(0).textContent = index + 1;
+    row.insertCell(1).textContent = doc.title || "Untitled";
+    row.insertCell(2).textContent =
+      doc.category && doc.category.trim() !== "" ? doc.category : "Uncategorized";
 
-            if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
-            if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
-    }
+    const viewCell = row.insertCell(3);
+    const viewLink = document.createElement("a");
+    viewLink.href = "#";
+    viewLink.textContent = "Click";
+    viewLink.onclick = (event) => {
+      event.preventDefault();
+      showDocumentPopup(doc.url);
+    };
+    viewCell.appendChild(viewLink);
 
-    filteredDocuments.forEach((doc, index) => {
-        const row = tableBody.insertRow();
-        row.insertCell(0).textContent = index + 1;
-        row.insertCell(1).textContent = doc.title || 'Untitled';
-        row.insertCell(2).textContent = doc.category && doc.category.trim() !== '' ? doc.category : 'Uncategorized';
+    if (showDeleteOption) {
+      const deleteLink = document.createElement("span");
+      deleteLink.textContent = " | ";
+      viewCell.appendChild(deleteLink);
 
-        const viewCell = row.insertCell(3);
-        const viewLink = document.createElement('a');
-        viewLink.href = '#';
-        viewLink.textContent = 'Click';
-        viewLink.onclick = (event) => {
-            event.preventDefault();
-            showDocumentPopup(doc.url);
-        };
-        viewCell.appendChild(viewLink);
-
-        if (showDeleteOption) {
-            const deleteLink = document.createElement('span');
-            deleteLink.textContent = ' | ';
-            viewCell.appendChild(deleteLink);
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.classList.add('delete-btn');
-            deleteBtn.onclick = async () => {
-                if (confirm(`Are you sure you want to delete "${doc.title}"?`)) {
-                    await deleteDocument(doc.id);
-                }
-            };
-            viewCell.appendChild(deleteBtn);
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.classList.add("delete-btn");
+      deleteBtn.onclick = async () => {
+        if (confirm(`Are you sure you want to delete "${doc.title}"?`)) {
+          await deleteDocument(doc.id);
         }
-    });
+      };
+      viewCell.appendChild(deleteBtn);
+    }
+  });
 }
 
-async function deleteDocument(idToDelete) {
-    if (!supabase) {
-        console.error('Supabase client not initialized.');
-        alert('Application not fully initialized. Please refresh.');
-        return;
-    }
-    const { error } = await supabase
-        .from('documents')
-        .delete()
-        .eq('id', idToDelete);
-
-    if (error) {
-        console.error('Error deleting document:', error.message);
-        alert('Failed to delete document. Please try again.');
-    } else {
-        alert('Document deleted successfully!');
-        await loadDocuments(true);
-    }
-}
 
 // --- Document Saving (Input Page) ---
 async function saveDocument() {
