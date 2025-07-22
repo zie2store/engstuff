@@ -193,6 +193,7 @@ async function loadDocuments(showDeleteOption) {
   });
 }
 
+// --- Document Delete (Dodument Page) ---
 async function deleteDocument(idToDelete) {
   if (!supabase) {
     console.error('Supabase client not initialized.');
@@ -214,7 +215,7 @@ async function deleteDocument(idToDelete) {
   }
 }
 
-window.deleteDocument = deleteDocument;
+
 
 
 // --- Document Saving (Input Page) ---
@@ -506,6 +507,7 @@ window.login = login;
 window.logout = logout;
 window.saveDocument = saveDocument;
 window.addNewCategory = addNewCategory;
+window.deleteDocument = deleteDocument;
 
 // --- DOMContentLoaded Listeners (Moved from HTML to script.js) ---
 document.addEventListener('DOMContentLoaded', async () => {
