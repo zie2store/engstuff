@@ -223,11 +223,19 @@ async function saveDocument() {
         return;
     }
 
-    const { data, error } = await supabase
-        .from('documents')
-        .insert([
-            { title, category, url }
-        ]);
+    const {
+         data: { user },
+              error: userError
+            } = await supabase.auth.getUser();
+            
+            if (userError || !user) {
+              alert('Cannot get user info. Please re-login.');
+              return;
+            }
+            
+            const { data, error } = await supabase
+              .from('documents')
+              .insert([{ title, category, url, user_id: user.id }]);
 
     if (error) {
         console.error('Error saving document:', error.message);
