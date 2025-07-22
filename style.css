@@ -31,6 +31,11 @@ header {
     color: #777;
 }
 
+.page-title:hover {
+  text-decoration: underline;
+  color: #007bff;
+}
+
 h1 {
     text-align: center;
     color: #333;
@@ -479,14 +484,4 @@ body.dark-mode input::placeholder {
   color: #ccc;
 }
 
-.page-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-  text-decoration: none;
-}
 
-.page-title:hover {
-  text-decoration: underline;
-  color: #007bff;
-}
