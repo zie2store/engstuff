@@ -159,58 +159,55 @@ async function loadDocuments(showDeleteOption) {
   }
 
   filteredDocuments.forEach((doc, index) => {
-    const row = tableBody.insertRow();
-    row.insertCell(0).textContent = index + 1;
-    row.insertCell(1).textContent = doc.title || "Untitled";
-    row.insertCell(2).textContent =
-      doc.category && doc.category.trim() !== "" ? doc.category : "Uncategorized";
+  const row = tableBody.insertRow();
+  row.insertCell(0).textContent = index + 1;
+  row.insertCell(1).textContent = doc.title || "Untitled";
+  row.insertCell(2).textContent =
+    doc.category && doc.category.trim() !== "" ? doc.category : "Uncategorized";
 
-    const viewCell = row.insertCell(3);
-const actionWrapper = document.createElement("div");
-actionWrapper.classList.add("view-edit-delete");
+  const viewCell = row.insertCell(3);
+  const actionWrapper = document.createElement("div");
+  actionWrapper.classList.add("view-edit-delete");
 
-// View link
-const viewLink = document.createElement("a");
-viewLink.href = "#";
-viewLink.textContent = "View";
-viewLink.onclick = (event) => {
-  event.preventDefault();
-  showDocumentPopup(doc.url);
-};
-actionWrapper.appendChild(viewLink);
-
-if (showDeleteOption) {
-  // Edit button
-  const editSeparator = document.createElement("span");
-  editSeparator.textContent = " | ";
-  actionWrapper.appendChild(editSeparator);
-
-  const editBtn = document.createElement("button");
-  editBtn.textContent = "Edit";
-  editBtn.onclick = () => openEditPopup(doc);
-  actionWrapper.appendChild(editBtn);
-
-  // Delete button
-  const deleteSeparator = document.createElement("span");
-  deleteSeparator.textContent = " | ";
-  actionWrapper.appendChild(deleteSeparator);
-
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "Delete";
-  deleteBtn.onclick = async () => {
-    const confirmed = confirm(`Are you sure you want to delete "${doc.title}"?`);
-    if (confirmed) {
-      await deleteDocument(doc.id);
-    }
+  // View link
+  const viewLink = document.createElement("a");
+  viewLink.href = "#";
+  viewLink.textContent = "View";
+  viewLink.onclick = (event) => {
+    event.preventDefault();
+    showDocumentPopup(doc.url);
   };
-  actionWrapper.appendChild(deleteBtn);
-}
+  actionWrapper.appendChild(viewLink);
 
-viewCell.appendChild(actionWrapper);
+  if (showDeleteOption) {
+    // Edit button
+    const editSeparator = document.createElement("span");
+    editSeparator.textContent = " | ";
+    actionWrapper.appendChild(editSeparator);
 
-    }
-  });
-}
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.onclick = () => openEditPopup(doc);
+    actionWrapper.appendChild(editBtn);
+
+    // Delete button
+    const deleteSeparator = document.createElement("span");
+    deleteSeparator.textContent = " | ";
+    actionWrapper.appendChild(deleteSeparator);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.onclick = async () => {
+      const confirmed = confirm(`Are you sure you want to delete "${doc.title}"?`);
+      if (confirmed) {
+        await deleteDocument(doc.id);
+      }
+    };
+    actionWrapper.appendChild(deleteBtn);
+  }
+
+  viewCell.appendChild(actionWrapper);
+}); // ✅ closes forEach
 
 // --- Document Delete (Dodument Page) ---
 async function deleteDocument(idToDelete) {
