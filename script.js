@@ -215,7 +215,79 @@ async function deleteDocument(idToDelete) {
   }
 }
 
+// Add separator
+const editSeparator = document.createElement("span");
+editSeparator.textContent = " | ";
+viewCell.appendChild(editSeparator);
 
+// Add Edit button
+const editBtn = document.createElement("button");
+editBtn.textContent = "Edit";
+editBtn.classList.add("edit-btn");
+editBtn.onclick = () => {
+  openEditPopup(doc); // 👈 call function with doc data
+};
+viewCell.appendChild(editBtn);
+
+//Edit Logic
+
+let currentEditId = null;
+
+function openEditPopup(doc) {
+  currentEditId = doc.id;
+
+  // Populate form
+  document.getElementById("edit-title").value = doc.title || "";
+  document.getElementById("edit-url").value = doc.url || "";
+
+  // Load categories
+  getCategoriesFromDB().then((categories) => {
+    const select = document.getElementById("edit-category");
+    select.innerHTML = '<option value="">Select Category</option>';
+    categories.forEach(cat => {
+      const option = document.createElement("option");
+      option.value = cat;
+      option.textContent = cat;
+      if (cat === doc.category) option.selected = true;
+      select.appendChild(option);
+    });
+  });
+
+  document.getElementById("edit-popup-overlay").style.display = "flex";
+}
+
+function closeEditPopup() {
+  document.getElementById("edit-popup-overlay").style.display = "none";
+  currentEditId = null;
+}
+
+async function saveEditedDocument() {
+  if (!currentEditId) return;
+
+  const newTitle = document.getElementById("edit-title").value.trim();
+  const newUrl = document.getElementById("edit-url").value.trim();
+  const newCategory = document.getElementById("edit-category").value;
+
+  if (!newTitle || !newUrl || !newCategory) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("documents")
+    .update({ title: newTitle, url: newUrl, category: newCategory })
+    .eq("id", currentEditId);
+
+  if (error) {
+    alert("Failed to update document.");
+    console.error(error);
+    return;
+  }
+
+  alert("Document updated.");
+  closeEditPopup();
+  await loadDocuments(true);
+}
 
 
 // --- Document Saving (Input Page) ---
@@ -508,6 +580,10 @@ window.logout = logout;
 window.saveDocument = saveDocument;
 window.addNewCategory = addNewCategory;
 window.deleteDocument = deleteDocument;
+window.openEditPopup = openEditPopup;
+window.closeEditPopup = closeEditPopup;
+window.saveEditedDocument = saveEditedDocument;
+
 
 // --- DOMContentLoaded Listeners (Moved from HTML to script.js) ---
 document.addEventListener('DOMContentLoaded', async () => {
