@@ -82,6 +82,17 @@ document.addEventListener("DOMContentLoaded", () => {
 function closeLoginModal() {
   document.getElementById("login-modal").style.display = "none";
 }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+
+    if (toggle && passwordInput) {
+      toggle.addEventListener('change', () => {
+        passwordInput.type = toggle.checked ? 'text' : 'password';
+      });
+    }
+  });
 </script>
 
 
