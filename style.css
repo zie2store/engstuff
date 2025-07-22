@@ -656,3 +656,8 @@ body.dark-mode .view-edit-delete span {
   color: #666;
 }
 
+#auth-action {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
