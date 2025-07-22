@@ -616,3 +616,43 @@ body.dark-mode .modal-content input[type="password"] {
 body.dark-mode .modal-content .close-button {
   color: #ccc;
 }
+
+/* Button Row (View | Edit | Delete) */
+.view-edit-delete button,
+.view-edit-delete a {
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  margin: 0 2px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #0056d2;
+  text-decoration: underline;
+}
+
+.view-edit-delete button:hover,
+.view-edit-delete a:hover {
+  color: #003f9a;
+  text-decoration: none;
+}
+
+.view-edit-delete span {
+  color: #888;
+  margin: 0 2px;
+}
+
+/* Dark mode compatibility */
+body.dark-mode .view-edit-delete button,
+body.dark-mode .view-edit-delete a {
+  color: #66aaff;
+}
+
+body.dark-mode .view-edit-delete button:hover,
+body.dark-mode .view-edit-delete a:hover {
+  color: #3399ff;
+}
+
+body.dark-mode .view-edit-delete span {
+  color: #666;
+}
+
